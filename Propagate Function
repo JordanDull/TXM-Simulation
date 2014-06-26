@@ -4,13 +4,6 @@ import numpy as np
 import matplotlib.pyplot as plt 
 from mpl_toolkits.mplot3d import Axes3D
 
-fc=5
-#.0000975
-#r1=.0000575    #.0000575
-#Nf=waveWidth**2/(waveLen*z)
-fig=plt.figure()
-ax = fig.add_subplot(111,projection='3d')
-
 def makeAry(size,waveWidth,r1,typ):    
     xval=np.linspace(-waveWidth,waveWidth,size)
     yval=np.linspace(-waveWidth,waveWidth,size)
@@ -28,10 +21,25 @@ def makeAry(size,waveWidth,r1,typ):
                     Z[t][r]=0
                 else:
                     Z[t][r]=1
+    Z=np.append(Z,waveWidth)
     return Z
     
-def Propagate(inputwav,z,wavlen): 
-    waveWidth=.0000975  #inputwav[inputwav.size-1]
+def Condenser(ary,fc,wavLen):
+    k=2*pi/wavLen
+    waveWidth=ary[ary.size-1]
+    ary=np.delete(ary,ary.size-1)
+    ary=np.reshape(ary,(sqrt(ary.size),sqrt(ary.size)))
+    xval=np.linspace(-waveWidth,waveWidth,sqrt(ary.size))
+    yval=np.linspace(-waveWidth,waveWidth,sqrt(ary.size))
+    X,Y=meshgrid(xval,yval)
+    ary2=exp(1j*k*(X**2+Y**2)/(2*fc))*ary
+    ary2=np.append(ary2,waveWidth)      
+    return ary2
+
+def Propagate(inputwav,z,wavlen,areaV,dx): 
+    waveWidth=inputwav[inputwav.size-1]
+    inputwav=np.delete(inputwav,inputwav.size-1)
+    inputwav=np.reshape(inputwav,(sqrt(inputwav.size),sqrt(inputwav.size)))
     k=2*pi/wavlen
     def Int(x,y,psi,xp,yp):
         r=sqrt(z**2+(x-xp)**2+(y-yp)**2)
@@ -49,16 +57,27 @@ def Propagate(inputwav,z,wavlen):
         PsiTot=sum(psipr)
         return abs((PsiTot*z)/(1j)) 
     aryLx,aryLy=makeInput(inputwav)
-    #inputwav=np.delete(inputwav,inputwav.size-1)
-    xp=arange(-waveWidth*1,waveWidth*1,.000003)
-    yp=arange(-waveWidth*1,waveWidth*1,.000003)
+    xp=np.linspace(-waveWidth*areaV,waveWidth*areaV,dx)
+    yp=np.linspace(-waveWidth*areaV,waveWidth*areaV,dx)
     Xp,Yp=meshgrid(xp,yp)
     zs=np.array([PsiPrimeSqr(aryLx,aryLy,inputwav,xp,yp) for xp,yp in zip(np.ravel(Xp),np.ravel(Yp))])
+    maxZ=np.amax(zs)
+    zs=zs/maxZ
     Zp=zs.reshape(Xp.shape)
     return Xp,Yp,Zp
     
-waveWidth=.0000975 
-ary=makeAry(300,waveWidth,.0000,1)   
-X,Y,Z=Propagate(ary,1,1.5e-10)
+     
+fig=plt.figure()
+ax = fig.add_subplot(111,projection='3d')     
+waveWidth=.000195 
+r1=.000115
+waveLen=1.5e-10
+ary=makeAry(400,waveWidth,r1,1)
+'''with open('ring200_00009_0D2.txt') as f:
+    for line in f:
+        ary = np.array([map(float, line.split())])
+    f.close()'''
+aryLensed=Condenser(ary,5,waveLen)
+X,Y,Z=Propagate(aryLensed,5,waveLen,.5,50)
 ax.plot_surface(X,Y,Z,cmap=plt.cm.jet, rstride=1, cstride=1, linewidth=0)
 plt.show()
