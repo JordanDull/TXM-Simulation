@@ -1,22 +1,26 @@
-from numpy import *
+from numpy import (sqrt, meshgrid, pi, exp, abs)
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 
 def makeAry(size, waveWidth, r1, typ):
     xval = np.linspace(-waveWidth, waveWidth, size)
     yval = np.linspace(-waveWidth, waveWidth, size)
     X, Y = meshgrid(xval, yval)
-    Z = arange(len(X)*len(Y)).reshape(len(X), len(Y))
+    Z = np.arange(len(X)*len(Y)).reshape(len(X), len(Y))
     for t in range(len(X)):
         for r in range(len(Y)):
             if typ == 0:
-                if (abs(X[t][r])>waveWidth*1 or abs(Y[t][r])>waveWidth*1) or (abs(X[t][r])<r1 and abs(Y[t][r])<r1):
+                if ((abs(X[t][r]) > waveWidth*1 or
+                     abs(Y[t][r]) > waveWidth*1) or
+                     (abs(X[t][r]) < r1 and abs(Y[t][r]) < r1)):
                     Z[t][r] = 0
                 else:
                     Z[t][r] = 1
             if typ == 1:
-                if sqrt(X[t][r]**2+Y[t][r]**2)>waveWidth*1 or sqrt(X[t][r]**2+Y[t][r]**2)<r1*1.5:
+                if (sqrt(X[t][r]**2+Y[t][r]**2) > waveWidth*1 or
+                      sqrt(X[t][r]**2+Y[t][r]**2) < r1*1.5):
                     Z[t][r] = 0
                 else:
                     Z[t][r] = 1
@@ -42,15 +46,18 @@ def Propagate(inputwav, z, wavlen, areaV, dx):
     inputwav = np.delete(inputwav, inputwav.size-1)
     inputwav = np.reshape(inputwav, (sqrt(inputwav.size), sqrt(inputwav.size)))
     k = 2*pi/wavlen
+
     def Int(x, y, psi, xp, yp):
         r = sqrt(z**2+(x-xp)**2+(y-yp)**2)
         return (exp(-1j*k*r)/(r**2))*psi
-        #*exp(1j*k*(x**2+y**2)/(2*fc))
+        # *exp(1j*k*(x**2+y**2)/(2*fc))
+
     def makeInput(waval):
         xval = np.linspace(-waveWidth, waveWidth, sqrt(waval.size))
         yval = np.linspace(-waveWidth, waveWidth, sqrt(waval.size))
         X, Y = meshgrid(xval, yval)
         return X, Y
+
     def PsiPrimeSqr(aryx, aryy, aryP, xp, yp):
         psipr = Int(aryx, aryy, aryP, xp, yp)
         aryy = []
@@ -61,7 +68,8 @@ def Propagate(inputwav, z, wavlen, areaV, dx):
     xp = np.linspace(-waveWidth*areaV, waveWidth*areaV, dx)
     yp = np.linspace(-waveWidth*areaV, waveWidth*areaV, dx)
     Xp, Yp = meshgrid(xp, yp)
-    zs = np.array([PsiPrimeSqr(aryLx, aryLy, inputwav, xp, yp) for xp, yp in zip(np.ravel(Xp), np.ravel(Yp))])
+    zs = np.array([PsiPrimeSqr(aryLx, aryLy, inputwav, xp_, yp_)
+                   for xp_, yp_ in zip(np.ravel(Xp), np.ravel(Yp))])
     maxZ = np.amax(zs)
     zs = zs/maxZ
     Zp = zs.reshape(Xp.shape)
@@ -69,7 +77,7 @@ def Propagate(inputwav, z, wavlen, areaV, dx):
 
 
 fig = plt.figure()
-ax = fig.add_subplot(111, projection = '3d')
+ax = fig.add_subplot(111, projection='3d')
 waveWidth = .000195
 r1 = .000115
 waveLen = 1.5e-10
