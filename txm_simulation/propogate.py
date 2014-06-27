@@ -5,6 +5,28 @@ from mpl_toolkits.mplot3d import Axes3D
 
 
 def makeAry(size, waveWidth, r1, typ):
+    """
+    Prose description of code
+
+    Parameters
+    ----------
+    size : type
+        description
+
+    waveWidth : type
+        description
+
+    r1 : type
+        description
+
+    typ : type
+        description
+
+    Returns
+    -------
+    Z : type
+        description
+    """
     xval = np.linspace(-waveWidth, waveWidth, size)
     yval = np.linspace(-waveWidth, waveWidth, size)
     X, Y = meshgrid(xval, yval)
