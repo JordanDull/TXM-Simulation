@@ -30,37 +30,14 @@ def makeAry(size, waveWidth, r1, typ):
     xval = np.linspace(-waveWidth, waveWidth, size)
     yval = np.linspace(-waveWidth, waveWidth, size)
     X, Y = meshgrid(xval, yval)
-    Z = np.arange(len(X)*len(Y)).reshape(len(X), len(Y))
-    for t in range(len(X)):
-        for r in range(len(Y)):
-            if typ == 0:
-                if ((abs(X[t][r]) > waveWidth*1 or
-                     abs(Y[t][r]) > waveWidth*1) or
-                     (abs(X[t][r]) < r1 and abs(Y[t][r]) < r1)):
-                    Z[t][r] = 0
-                else:
-                    Z[t][r] = 1
-            if typ == 1:
-                if (sqrt(X[t][r]**2+Y[t][r]**2) > waveWidth*1 or
-                      sqrt(X[t][r]**2+Y[t][r]**2) < r1*1.5):
-                    Z[t][r] = 0
-                else:
-                    Z[t][r] = 1
-    Z = np.append(Z, waveWidth)
-    return Z
+    Rsq = X**2 + Y**2
+    Z = (Rsq < (r1*1.5)**2) * (Rsq > (r1*.5)**2)
+    return X, Y, Z
 
 
-def Condenser(ary, fc, wavLen):
+def Condenser(X, Y, Z, waveWidth, fc, wavLen):
     k = 2*pi/wavLen
-    waveWidth = ary[ary.size-1]
-    ary = np.delete(ary, ary.size-1)
-    ary = np.reshape(ary, (sqrt(ary.size), sqrt(ary.size)))
-    xval = np.linspace(-waveWidth, waveWidth, sqrt(ary.size))
-    yval = np.linspace(-waveWidth, waveWidth, sqrt(ary.size))
-    X, Y = meshgrid(xval, yval)
-    ary2 = exp(1j*k*(X**2+Y**2)/(2*fc))*ary
-    ary2 = np.append(ary2, waveWidth)
-    return ary2
+    return exp(1j*k*(X**2+Y**2)/(2*fc))*Z
 
 
 def Propagate(inputwav, z, wavlen, areaV, dx):
