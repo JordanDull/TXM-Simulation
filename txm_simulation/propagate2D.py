@@ -57,7 +57,8 @@ r1=115e-6
 waveLen=1.5e-10
 dist=1.9
 fc=.1
-X,Y,Z=makeAry(20)
+lsSize=20
+X,Y,Z=makeAry(lsSize)
 size=150
 
 def do_sum(X,Y,Z):
@@ -70,7 +71,7 @@ def do_sum(X,Y,Z):
         Xp,Yp,Zp=PropagatePoint(X[i][j],Y[i][j],Z[i][j],dist,waveLen,1,1500)
         ZL=Condenser(Xp,Yp,Zp,fc,waveLen)
         Xpp,Ypp,Zpp=Propagate(Xp,Yp,ZL,.105556,waveLen,.1,size)
-        ansSum=ansSum+abs(Zpp)
+        ansSum=ansSum+(abs(Zpp)/1000)**2
         Zpp=Zpp.reshape(1,size**2)
         ans[i*len(X)+j]=Zpp[0]
   return ansSum,ans
@@ -125,7 +126,7 @@ Xpp,Ypp,Zpp=Propagate(Xp,Yp,ZL,.105556,waveLen,.1,100)
 #Xppp,Yppp,Zppp=Propagate(Xpp,Ypp,Zpp/100,.0253165, waveLen,1,20)'''
 
 
-Xpp,Ypp,Z=makeAry(20)
+Xpp,Ypp,Z=makeAry(size)
 
 if __name__=='__main__':
   Zpp,ans=main()
