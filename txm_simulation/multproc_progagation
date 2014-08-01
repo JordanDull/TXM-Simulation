@@ -210,7 +210,6 @@ X,Z=makeAry(700) #700
 size=2500 #500
 
 def do_sum(X,Z):
-  size=2500
   ans=arange(X.size*size).reshape(X.size,size)
   ansSum=[0]*size
   for i in range(X.size):
@@ -222,7 +221,7 @@ def do_sum(X,Z):
     #ZpppL=Condenser(Xppp,Zppp,fo,waveLen,aprObs,0)
     #X4p,Z4p=Propagate(Xppp,ZpppL,2,waveLen,6,size,0)
     ans[i]=abs(Zppp)
-    ansSum=ansSum+ans[i]
+    ansSum=ansSum+(ans[i]/1000)**2
   return ansSum
 
 def do_prop (q,X,Z):
@@ -256,6 +255,9 @@ ZSam=Sample(Xpp,Zpp, n, waveLen)
 Xppp,Zppp=Propagate(Xpp,ZSam,.01959,waveLen,.5,2500)
 ZpppL=Condenser(Xppp,Zppp,fo,waveLen,aprObs)
 X4p,Z4p=Propagate(Xppp,ZpppL,2,waveLen,6,1000)'''
+
+
+Xppp=np.linspace(-1,1,size)
 
 '''a=open('sum2_obs_sam.txt','w')
 for t in range(ansSum.size):
