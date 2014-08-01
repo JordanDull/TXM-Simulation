@@ -65,7 +65,7 @@ for i in range(len(X)):
         Xp,Yp,Zp=PropagatePoint(X[i][j],Y[i][j],Z[i][j],dist,waveLen,1,1500)
         ZL=Condenser(Xp,Yp,Zp,fc,waveLen)
         Xpp,Ypp,Zpp=Propagate(Xp,Yp,ZL,.105556,waveLen,.1,size)
-        ansSum=ansSum+abs(Zpp)
+        ansSum=ansSum+(abs(Zpp)/1000)**2
         Zpp=Zpp.reshape(1,size**2)
         ans[i*len(X)+j]=Zpp[0]
         
