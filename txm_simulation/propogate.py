@@ -142,7 +142,7 @@ def Propagate(X,Y,Z, dist, wavlen, areaV, dx):
         aryy = []
         aryx = []
         PsiTot = sum(psipr)
-        return abs((PsiTot*dist)/(1j))
+        return abs((PsiTot*dist)/(1j))**2
         
     waveWidth=abs(X[0][0])
     k = 2*pi/wavlen    
