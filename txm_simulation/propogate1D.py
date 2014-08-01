@@ -120,7 +120,7 @@ def Propagate(X,Z,dist,wavlen,areaV,dx):
         r=sqrt(dist**2+(X-xp)**2)
         psipr=(exp(-1j*k*r)/(r**2))*Z 
         PsiTot=sum(psipr)
-        return abs((PsiTot*dist)/(1j))  
+        return abs((PsiTot*dist)/(1j))**2  
     k=2*pi/wavlen 
     waveWidth=abs(X[0])
     Xp=np.linspace(-waveWidth*areaV,waveWidth*areaV,dx)
