@@ -218,7 +218,7 @@ for i in range(X.size):
     #ZpppL=Condenser(Xppp,Zppp/100,fo,waveLen,aprObs,0)
     #X4p,Z4p=Propagate(Xppp,ZpppL,2,waveLen,6,size,0)
     ans[i]=abs(Zppp)
-    ansSum=ansSum+ans[i]
+    ansSum=ansSum+(ans[i]/1000)**2
     
 '''#Single Point Propagation
 X,Z=-.00009,1  #.00009
